@@ -6,7 +6,7 @@ import socket
 
 # le client se connecte a un serveur
 
-serveur = "10.72.208.125"
+serveur = "127.0.1.1"
 port = 15555
 so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 so.connect((serveur, port))
@@ -30,7 +30,7 @@ class App(Tk):
         self.listbox.pack(side = LEFT, fill = BOTH)
         self.scrollbar = Scrollbar(F)
         self.scrollbar.pack(side = RIGHT, fill = BOTH)
-        self.listbox.insert(END,"Bienvenue sur le chaat, "+self.n)
+        self.affiche("Bienvenue sur le chat, "+self.n);
         self.listbox.config(yscrollcommand = self.scrollbar.set)
         self.scrollbar.config(command = self.listbox.yview)
         self.entree=Entry(self,width=W)
@@ -64,3 +64,4 @@ class App(Tk):
             sleep(0.5)
          
 App().mainloop()
+

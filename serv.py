@@ -6,6 +6,7 @@ from time import sleep
 from tkinter import *
 import socket
 
+print("Serveur connecté sur :",socket.gethostbyname(socket.gethostname()))
 so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 so.bind(("", 15555))
 so.listen(1)
