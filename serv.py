@@ -5,10 +5,10 @@ from random import *
 from time import sleep
 from tkinter import *
 import socket
-
-print("Serveur connecté sur :",socket.gethostbyname(socket.gethostname()))
+addr=socket.gethostbyname(socket.gethostname())
+print("Serveur connecté sur :",addr)
 so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-so.bind(("", 15555))
+so.bind((addr, 15555))
 so.listen(1)
 sou,ip=so.accept()
 
@@ -16,10 +16,10 @@ print('Connexted)')
 L=400
 W=50
 
-# une fenetre avec un champ pour ecrire et un champ pour visualiser 
+# une fenetre avec un champ pour ecrire et un champ pour visualiser
 
 class App(Tk):
- 
+
     def __init__(self):
         self.n="Serv"
 
@@ -31,7 +31,7 @@ class App(Tk):
         self.listbox.pack(side = LEFT, fill = BOTH)
         self.scrollbar = Scrollbar(F)
         self.scrollbar.pack(side = RIGHT, fill = BOTH)
-        self.listbox.insert(END,"Bienvenue sur le chaat, "+self.n)
+        self.listbox.insert(END,"Bienvenue sur le chat, "+self.n)
         self.listbox.config(yscrollcommand = self.scrollbar.set)
         self.scrollbar.config(command = self.listbox.yview)
         self.entree=Entry(self,width=W)
@@ -40,20 +40,27 @@ class App(Tk):
         self.prise=sou
         self._fred=Thread(target=self.recevoir)
         self._fred.start()
+
     def affiche(self,txt):
         for elem in txt.split("\0"):
             self.listbox.insert(END,elem)
         self.listbox.yview_moveto(1)
-        
+
 
     def action(self,*args):
-        
+
         txt=self.entree.get()
         self.entree.delete(0,END)
         if txt.startswith("µ"):
             t=txt.split()
-            self.listbox[t[1]]=t[2]
-            self.affiche(f"µ time ! : {t[1]} = {self.listbox[t[1]]}")
+            try:
+                self.listbox[t[1]]=t[2]
+            except:
+                if t[1]=="name":
+                    self.n = '_'.join(t[2:])
+                    self.title(self.n)
+            finally:
+                self.affiche(f"µ time ! : {t[1]} = {t[2]}")
         else:
             self.affiche(f"\0{self.n} : {txt}")
             self.prise.send(bytes(f"\0{self.n} : {txt}",'utf-8'))
@@ -62,7 +69,9 @@ class App(Tk):
     def recevoir(self):
         while True:
             txt=self.prise.recv(128).decode()
+
             self.affiche(txt)
             sleep(0.5)
-         
+
 App().mainloop()
+so.shutdown(0)

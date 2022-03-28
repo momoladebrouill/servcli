@@ -16,10 +16,10 @@ print ("Connection on {} yes".format(port))
 L=400
 W=50
 
-# une fenetre avec un champ pour ecrire et un champ pour visualiser 
+# une fenetre avec un champ pour ecrire et un champ pour visualiser
 
 class App(Tk):
- 
+
     def __init__(self):
         self.n="CLI"
         Tk.__init__(self)
@@ -45,13 +45,19 @@ class App(Tk):
         self.listbox.yview_moveto(1)
 
     def action(self,*args):
-        
+
         txt=self.entree.get()
         self.entree.delete(0,END)
         if txt.startswith("µ"):
             t=txt.split()
-            self.listbox[t[1]]=t[2]
-            self.affiche(f"µ time ! : {t[1]} = {self.listbox[t[1]]}")
+            try:
+                self.listbox[t[1]]=t[2]
+            except:
+                if t[1]=="name":
+                    self.n = '_'.join(t[2:])
+                    self.title(self.n)
+            finally:
+                self.affiche(f"µ time ! : {t[1]} = {t[2]}")
         else:
             self.affiche(f"\0{self.n} : {txt}")
             self.prise.send(bytes(f"\0{self.n} : {txt}",'utf-8'))
@@ -62,6 +68,6 @@ class App(Tk):
             txt=self.prise.recv(128).decode()
             self.affiche(txt)
             sleep(0.5)
-         
-App().mainloop()
 
+App().mainloop()
+so.shutdown(0)
